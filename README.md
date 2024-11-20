@@ -2,17 +2,18 @@
 
 ## Overview
 
-New App is an application that allows users to communicate with an AI assistant in writing and voice. The AI assistant takes on the role of a wise advisor, providing guidance and support to help users navigate through challenging times and overcome psychological hurdles.
+New App is an application that allows users to communicate with an AI assistant in writing and voice. The AI assistant takes on the role of a wise advisor, providing guidance and support to help users navigate through challenging times and overcome psychological hurdles. The app aims to help depressed and psychologically tired individuals overcome their psychological ordeals by offering compassionate and thoughtful advice.
 
 ## Features
 
 - **User Authentication**: Secure login using Supabase Authentication with social providers like Google, Facebook, and Apple.
-- **Text Communication**: Users can send text messages to the AI assistant and receive thoughtful responses.
+- **Text Communication**: Users can send text messages to the AI assistant and receive thoughtful responses tailored to provide support and guidance.
 - **Voice Communication**: Users can speak to the AI assistant and hear responses via text-to-speech.
 - **Interactive Chat Interface**: A user-friendly chat interface that displays the conversation history.
 - **Responsive Design**: The app is designed to be responsive and user-friendly on all device sizes.
 - **Error Handling and Loading States**: Provides feedback to the user during API calls and handles errors gracefully.
 - **Progressive Web App**: Installable and works offline using Progressier.
+- **Made on ZAPT Badge**: A badge linking to [ZAPT](https://www.zapt.ai) is displayed on the app.
 
 ## User Journeys
 
@@ -27,7 +28,7 @@ New App is an application that allows users to communicate with an AI assistant 
 
 1. **Start Chatting**: On the home page, the user sees a chat interface with previous messages.
 2. **Send Message**: The user types a message seeking advice and clicks the "Send" button.
-3. **Receive Response**: The AI assistant responds with thoughtful advice, which appears in the chat.
+3. **Receive Response**: The AI assistant responds with thoughtful and compassionate advice, which appears in the chat.
 4. **Continue Conversation**: The user can continue sending messages and receiving responses.
 
 ### 3. Voice Conversation with the AI Assistant

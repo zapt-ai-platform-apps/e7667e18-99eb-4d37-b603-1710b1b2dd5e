@@ -49,12 +49,15 @@ function App() {
     setMessages([...messages(), { sender: 'user', text: message }]);
     setNewMessage('');
     try {
+      const initialPrompt =
+        'You are a wise man advising people on matters of life, helping depressed and psychologically tired individuals overcome their psychological ordeals. Please provide thoughtful and compassionate advice.';
+      const fullPrompt = `${initialPrompt}\n\nUser: ${message}\nAssistant:`;
       const response = await createEvent('chatgpt_request', {
-        prompt: message,
-        response_type: 'text'
+        prompt: fullPrompt,
+        response_type: 'text',
       });
       if (response) {
-        setMessages([...messages(), { sender: 'user', text: message }, { sender: 'ai', text: response }]);
+        setMessages((prev) => [...prev, { sender: 'ai', text: response }]);
         handleTextToSpeech(response);
       }
     } catch (error) {
@@ -101,11 +104,11 @@ function App() {
   };
 
   return (
-    <div class="h-full bg-gradient-to-br from-purple-100 to-blue-100 p-4 text-gray-900">
+    <div class="min-h-screen bg-gradient-to-br from-purple-100 to-blue-100 p-4 text-gray-900">
       <Show
         when={currentPage() === 'homePage'}
         fallback={
-          <div class="flex items-center justify-center h-full">
+          <div class="flex items-center justify-center min-h-screen">
             <div class="w-full max-w-md p-8 bg-white rounded-xl shadow-lg">
               <h2 class="text-3xl font-bold mb-6 text-center text-purple-600">Sign in with ZAPT</h2>
               <a
@@ -128,7 +131,7 @@ function App() {
           </div>
         }
       >
-        <div class="max-w-2xl mx-auto h-full flex flex-col">
+        <div class="max-w-2xl mx-auto min-h-screen flex flex-col">
           <div class="flex justify-between items-center mb-4">
             <h1 class="text-2xl font-bold text-purple-600">Wise Advisor</h1>
             <button
