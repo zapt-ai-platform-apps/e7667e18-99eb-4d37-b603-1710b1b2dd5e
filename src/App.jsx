@@ -4,12 +4,7 @@ import { Auth } from '@supabase/auth-ui-solid';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 
 function App() {
-  const [messages, setMessages] = createSignal([
-    {
-      sender: 'ai',
-      text: "I understand how you're feeling. It's completely normal to experience these emotions. Let's work through this together. Would you like to tell me more about what's been on your mind?",
-    },
-  ]);
+  const [messages, setMessages] = createSignal([]);
   const [newMessage, setNewMessage] = createSignal('');
   const [user, setUser] = createSignal(null);
   const [currentPage, setCurrentPage] = createSignal('login');
@@ -17,20 +12,50 @@ function App() {
   const [listening, setListening] = createSignal(false);
 
   const checkUserSignedIn = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (user) {
       setUser(user);
       setCurrentPage('homePage');
+      if (messages().length === 0) {
+        await generateInitialMessage();
+      }
     }
   };
 
-  onMount(checkUserSignedIn);
+  const generateInitialMessage = async () => {
+    setLoading(true);
+    try {
+      const prompt =
+        'Please initiate a conversation with a user who might be feeling psychologically tired or depressed. Respond in a compassionate and supportive manner to encourage them to share their feelings.';
+      const response = await createEvent('chatgpt_request', {
+        prompt: prompt,
+        response_type: 'text',
+      });
+      if (response) {
+        setMessages([{ sender: 'ai', text: response }]);
+        handleTextToSpeech(response);
+      }
+    } catch (error) {
+      console.error('Error generating initial message:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  onMount(() => {
+    checkUserSignedIn();
+  });
 
   createEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange((_, session) => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (_, session) => {
       if (session?.user) {
         setUser(session.user);
         setCurrentPage('homePage');
+        if (messages().length === 0) {
+          await generateInitialMessage();
+        }
       } else {
         setUser(null);
         setCurrentPage('login');
@@ -110,7 +135,7 @@ function App() {
   };
 
   return (
-    <div class="min-h-screen bg-gradient-to-br from-purple-100 to-blue-100 p-4 text-gray-900">
+    <div class="h-full bg-gradient-to-br from-purple-100 to-blue-100 p-4 text-gray-900">
       <Show
         when={currentPage() === 'homePage'}
         fallback={
@@ -137,7 +162,7 @@ function App() {
           </div>
         }
       >
-        <div class="max-w-2xl mx-auto min-h-screen flex flex-col">
+        <div class="max-w-2xl mx-auto h-full flex flex-col">
           <div class="flex justify-between items-center mb-4">
             <h1 class="text-2xl font-bold text-purple-600">Wise Advisor</h1>
             <button
@@ -153,13 +178,18 @@ function App() {
               {(message) => (
                 <div
                   class={`mb-4 p-4 rounded-lg shadow-md ${
-                    message.sender === 'user' ? 'bg-white self-end text-right' : 'bg-purple-200 self-start text-left'
+                    message.sender === 'user'
+                      ? 'bg-white self-end text-right'
+                      : 'bg-purple-200 self-start text-left'
                   }`}
                 >
                   <p>{message.text}</p>
                 </div>
               )}
             </For>
+            <Show when={loading()}>
+              <div class="text-center text-gray-500">Loading...</div>
+            </Show>
           </div>
 
           <div class="flex items-center">
