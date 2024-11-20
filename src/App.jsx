@@ -4,7 +4,12 @@ import { Auth } from '@supabase/auth-ui-solid';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 
 function App() {
-  const [messages, setMessages] = createSignal([]);
+  const [messages, setMessages] = createSignal([
+    {
+      sender: 'ai',
+      text: "I understand how you're feeling. It's completely normal to experience these emotions. Let's work through this together. Would you like to tell me more about what's been on your mind?",
+    },
+  ]);
   const [newMessage, setNewMessage] = createSignal('');
   const [user, setUser] = createSignal(null);
   const [currentPage, setCurrentPage] = createSignal('login');
@@ -49,11 +54,12 @@ function App() {
     setMessages([...messages(), { sender: 'user', text: message }]);
     setNewMessage('');
     try {
-      const initialPrompt =
-        'You are a wise man advising people on matters of life, helping depressed and psychologically tired individuals overcome their psychological ordeals. Please provide thoughtful and compassionate advice.';
-      const fullPrompt = `${initialPrompt}\n\nUser: ${message}\nAssistant:`;
+      const conversation = messages()
+        .map((msg) => `${msg.sender === 'user' ? 'User' : 'Assistant'}: ${msg.text}`)
+        .join('\n');
+      const prompt = `${conversation}\nAssistant:`;
       const response = await createEvent('chatgpt_request', {
-        prompt: fullPrompt,
+        prompt: prompt,
         response_type: 'text',
       });
       if (response) {
